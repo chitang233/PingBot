@@ -1,11 +1,14 @@
 import logging
 import subprocess
+
+from aiogram.bot.api import TelegramAPIServer
 from aiogram.utils import markdown as md
 from aiogram import Bot, Dispatcher, executor, types
 
-API_TOKEN = ''
+API_TOKEN = ''  # Required, get from @BotFather
+PROXY_URL = ''  # Optional, 'http://PROXY_URL' 'socks5://host:port'
 logging.basicConfig(level=logging.INFO)
-bot = Bot(token=API_TOKEN)
+bot = Bot(token=API_TOKEN, proxy=PROXY_URL)
 dp = Dispatcher(bot)
 
 
