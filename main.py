@@ -1,10 +1,13 @@
 import logging
 import subprocess
+import requests
 from aiogram.utils import markdown as md
 from aiogram import Bot, Dispatcher, executor, types
 
 API_TOKEN = ''  # Required, get from @BotFather
 PROXY_URL = ''  # Optional, 'http://PROXY_URL' 'socks5://host:port'
+SHOW_PUBLIC_IP = False  # Optional, add your IP in /start message if set to True
+
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN, proxy=PROXY_URL)
 dp = Dispatcher(bot)
@@ -35,16 +38,20 @@ def tcp_ping(ip, port):
 
 @dp.message_handler(commands=['start'])
 async def send_welcome(message: types.Message):
-	await message.reply('''
+	content = '''
 Hello!
 I'm Ping Bot!
 I can ping your server with ICMP or TCP protocols.
 
-
 Usage:
 /icmp <ip> - ICMP ping to IP
 /tcp <ip> <port> - TCP ping to IP:PORT
-'''.strip())
+'''
+	if SHOW_PUBLIC_IP:
+		ip = requests.get("https://ipinfo.io/json").json()['ip']
+		await message.reply(f"{content}\nRunning on {ip}".strip())
+	else:
+		await message.reply(content.strip())
 
 
 @dp.message_handler(commands=['icmp'])
@@ -62,7 +69,7 @@ async def icmp(message: types.Message):
 		else:
 			await waiting_message.edit_text(f"ICMP ping to {ip}:\nNo result")
 	except Exception as e:
-			await waiting_message.edit_text(f"ICMP ping to {ip}:\n{e}")
+		await waiting_message.edit_text(f"ICMP ping to {ip}:\n{e}")
 
 
 @dp.message_handler(commands=['tcp'])

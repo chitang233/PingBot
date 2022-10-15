@@ -1,2 +1,3 @@
 aiogram
 aiohttp_socks
+requests
