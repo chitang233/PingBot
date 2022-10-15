@@ -1,7 +1,5 @@
 import logging
 import subprocess
-
-from aiogram.bot.api import TelegramAPIServer
 from aiogram.utils import markdown as md
 from aiogram import Bot, Dispatcher, executor, types
 
