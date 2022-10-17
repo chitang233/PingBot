@@ -4,9 +4,9 @@ import requests
 from aiogram.utils import markdown as md
 from aiogram import Bot, Dispatcher, executor, types
 
-API_TOKEN = ''  # Required, get from @BotFather
-PROXY_URL = ''  # Optional, 'http://PROXY_URL' 'socks5://host:port'
-SHOW_PUBLIC_IP = False  # Optional, add your IP in /start message if set to True
+API_TOKEN = ''
+PROXY_URL = ''
+SHOW_PUBLIC_IP = False
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN, proxy=PROXY_URL)
