@@ -1,4 +1,6 @@
 # PingBot
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fchitang233%2FPingBot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fchitang233%2FPingBot?ref=badge_shield)
+
 
 A simple Telegram bot to ping a server over ICMP or TCP protocol.
 
@@ -29,3 +31,6 @@ Finally, edit `main.py`
 ```shell
 python main.py
 ```
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fchitang233%2FPingBot.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fchitang233%2FPingBot?ref=badge_large)
