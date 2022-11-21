@@ -1,21 +1,19 @@
 # PingBot
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fchitang233%2FPingBot.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fchitang233%2FPingBot?ref=badge_shield)
-
 
 A simple Telegram bot to ping a server over ICMP or TCP protocol.
 
 ## Installation
 
-First, you need to install these packages:
+First, you need to install these packages in your system:
 
 - Python 3.6+
 - Python pip
 - [zhengxiaowai/tcping](https://github.com/zhengxiaowai/tcping)
 
-Then, clone the repo and install the python packages:
+Then, clone the repo and install the requirements:
 
 ```shell
-git clone git@github.com:chitang233/PingBot.git
+git clone https://github.com/chitang233/PingBot
 cd PingBot
 pip install -r requirements.txt
 ```
@@ -32,5 +30,10 @@ Finally, edit `main.py`
 python main.py
 ```
 
-## License
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fchitang233%2FPingBot.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fchitang233%2FPingBot?ref=badge_large)
+## Commands
+
+```
+help - Show help message
+icmp - Ping a server over ICMP protocol
+tcp - Ping a server over TCP protocol, port required
+```

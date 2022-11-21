@@ -24,7 +24,6 @@ def icmp_ping(ip):
 
 
 def tcp_ping(ip, port):
-	# result = tcping.Ping(ip, port, 4).ping(4).result.table
 	process = subprocess.Popen(f"tcping {ip} -p {port} -c 4 --report", shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	result_arr = process.stdout.read().decode().split('\n')
@@ -36,7 +35,7 @@ def tcp_ping(ip, port):
 	return result.strip()
 
 
-@dp.message_handler(commands=['start'])
+@dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
 	content = '''
 Hello!
