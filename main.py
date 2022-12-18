@@ -6,7 +6,7 @@ from aiogram import Bot, Dispatcher, executor, types
 
 API_TOKEN = ''
 PROXY_URL = ''
-SHOW_PUBLIC_IP = False
+SHOW_PUBLIC_IP = True
 
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN, proxy=PROXY_URL)
@@ -48,7 +48,8 @@ Usage:
 '''
 	if SHOW_PUBLIC_IP:
 		ip = requests.get("https://ipinfo.io/json").json()['ip']
-		await message.reply(f"{content}\nRunning on {ip}".strip())
+		city = requests.get("https://ipinfo.io/json").json()['city']
+		await message.reply(f"{content}\nRunning on {ip} in {city}".strip())
 	else:
 		await message.reply(content.strip())
 
