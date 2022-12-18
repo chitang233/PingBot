@@ -4,10 +4,7 @@ import requests
 from aiogram.utils import markdown as md
 from aiogram import Bot, Dispatcher, executor, types
 
-API_TOKEN = ''
-PROXY_URL = ''
-SHOW_PUBLIC_IP = True
-
+from config import API_TOKEN, PROXY_URL, SHOW_PUBLIC_IP
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN, proxy=PROXY_URL)
 dp = Dispatcher(bot)
