@@ -32,6 +32,16 @@ def tcp_ping(ip, port):
 	return result.strip()
 
 
+def run_besttrace(ip):
+	process = subprocess.Popen(f"besttrace -g cn -q1 {ip}", shell=True, stdout=subprocess.PIPE)
+	process.wait()
+	result = ''
+	for line in process.stdout.read().decode().split('\n'):
+		if not ('*' in line or 'BestTrace' in line):
+			result += line + '\n'
+	return result.strip()
+
+
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
 	content = '''
@@ -84,6 +94,21 @@ async def tcp(message: types.Message):
 		await waiting_message.edit_text(md.escape_md(f"TCP ping to {ip}:{port}:\n") + result, parse_mode='MarkdownV2')
 	except Exception as e:
 		await waiting_message.edit_text(f"TCP ping to {ip}:{port}:\n{e}")
+
+
+@dp.message_handler(commands=['trace'])
+async def trace(message: types.Message):
+	ip = message.get_args()
+	logging.info(f'Trace {ip}')
+	if not ip:
+		await message.reply("You must specify IP address!")
+		return
+	waiting_message = await message.reply(f"Tracing to {ip} ...")
+	try:
+		result = run_besttrace(ip)
+		await waiting_message.edit_text(f"Trace to {ip}:\n{result}")
+	except Exception as e:
+		await waiting_message.edit_text(f"Trace to {ip}:\n{e}")
 
 
 if __name__ == '__main__':
