@@ -33,7 +33,7 @@ def tcp_ping(ip, port):
 
 
 def run_besttrace(ip):
-	process = subprocess.Popen(f"besttrace -g cn -q1 {ip}", shell=True, stdout=subprocess.PIPE)
+	process = subprocess.Popen(f"./lib/besttrace -g cn -q1 {ip}", shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	result = ''
 	for line in process.stdout.read().decode().split('\n'):
