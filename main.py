@@ -33,6 +33,8 @@ def tcp_ping(ip, port):
 
 
 def run_besttrace(ip):
+	if ip.__contains__(";", "&"):
+		return "Invalid input"
 	process = subprocess.Popen(f"./lib/besttrace -g cn -q1 {ip}", shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	result = ''
@@ -43,7 +45,7 @@ def run_besttrace(ip):
 
 
 def dns_lookup(host, type):
-	if host.__contains__(";") or type.__contains__(";"):
+	if host.__contains__(";", "&") or type.__contains__(";", "&"):
 		return "Invalid input"
 	process = subprocess.Popen(f"nslookup -type={type} {host}", shell=True, stdout=subprocess.PIPE)
 	process.wait()
