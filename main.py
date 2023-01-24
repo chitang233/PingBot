@@ -42,6 +42,16 @@ def run_besttrace(ip):
 	return result.strip()
 
 
+def dns_lookup(host, type):
+	process = subprocess.Popen(f"nslookup -type={type} {host}", shell=True, stdout=subprocess.PIPE)
+	process.wait()
+	result = ''
+	for line in process.stdout.read().decode().split('\n'):
+		if not (';' in line):
+			result += line + '\n'
+	return result.strip()
+
+
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
 	content = '''
@@ -109,6 +119,25 @@ async def trace(message: types.Message):
 		await waiting_message.edit_text(f"Trace to {ip}:\n{result}")
 	except Exception as e:
 		await waiting_message.edit_text(f"Trace to {ip}:\n{e}")
+
+
+@dp.message_handler(commands=['dns'])
+async def dns(message: types.Message):
+	args = message.get_args().split()
+	if len(args) < 1:
+		await message.reply("You must specify hostname!")
+		return
+	host = args[0]
+	type = 'A'
+	if len(args) > 1:
+		type = args[1]
+	logging.info(f'DNS lookup {host} as {type}')
+	waiting_message = await message.reply(f"DNS lookup {host} as {type} ...")
+	try:
+		result = dns_lookup(host, type)
+		await waiting_message.edit_text(f"DNS lookup {host} as {type}:\n{result}")
+	except Exception as e:
+		await waiting_message.edit_text(f"DNS lookup {host} as {type} failed:\n{e}")
 
 
 if __name__ == '__main__':
