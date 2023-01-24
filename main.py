@@ -11,6 +11,8 @@ dp = Dispatcher(bot)
 
 
 def icmp_ping(ip):
+	if ip.__contains__(";", "&"):
+		return "Invalid input"
 	process = subprocess.Popen(f"ping {ip} -c 4", shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	result = ''
@@ -21,6 +23,8 @@ def icmp_ping(ip):
 
 
 def tcp_ping(ip, port):
+	if ip.__contains__(";", "&"):
+		return "Invalid input"
 	process = subprocess.Popen(f"tcping {ip} -p {port} -c 4 --report", shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	result_arr = process.stdout.read().decode().split('\n')
