@@ -1,7 +1,7 @@
 import logging
-import shlex
 import subprocess
 import requests
+from shlex import quote
 from aiogram.utils import markdown as md
 from aiogram import Bot, Dispatcher, executor, types
 
@@ -12,8 +12,8 @@ dp = Dispatcher(bot)
 
 
 def icmp_ping(ip):
-	shlex.quote(ip)
-	process = subprocess.Popen(f"ping {ip} -c 4", shell=True, stdout=subprocess.PIPE)
+	command = "ping {} -c 4".format(quote(ip))
+	process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	result = ''
 	for line in process.stdout.read().decode().split('\n'):
@@ -23,9 +23,8 @@ def icmp_ping(ip):
 
 
 def tcp_ping(ip, port):
-	shlex.quote(ip)
-	shlex.quote(port)
-	process = subprocess.Popen(f"tcping {ip} -p {port} -c 4 --report", shell=True, stdout=subprocess.PIPE)
+	command = "tcping {} -p {} -c 4 --report".format(quote(ip), quote(port))
+	process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	result_arr = process.stdout.read().decode().split('\n')
 	keys = result_arr[-5].strip('|').split('|')
@@ -37,8 +36,8 @@ def tcp_ping(ip, port):
 
 
 def run_besttrace(ip):
-	shlex.quote(ip)
-	process = subprocess.Popen(f"./lib/besttrace -g cn -q1 {ip}", shell=True, stdout=subprocess.PIPE)
+	command = "./lib/besttrace -g cn -q1 {}".format(quote(ip))
+	process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	result = ''
 	for line in process.stdout.read().decode().split('\n'):
@@ -48,9 +47,8 @@ def run_besttrace(ip):
 
 
 def dns_lookup(host, type):
-	shlex.quote(host)
-	shlex.quote(type)
-	process = subprocess.Popen(f"nslookup -type={type} {host}", shell=True, stdout=subprocess.PIPE)
+	command = "nslookup -type={} {}".format(quote(type), quote(host))
+	process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	result = ''
 	for line in process.stdout.read().decode().split('\n'):
