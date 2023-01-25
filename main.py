@@ -26,13 +26,16 @@ def tcp_ping(ip, port):
 	command = "tcping {} -p {} -c 4 --report".format(quote(ip), quote(port))
 	process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
 	process.wait()
-	result_arr = process.stdout.read().decode().split('\n')
-	keys = result_arr[-5].strip('|').split('|')
-	values = result_arr[-3].strip('|').split('|')
-	result = ''
-	for subscript in range(2, 8):
-		result += md.escape_md(keys[subscript].strip()) + ": " + md.code(values[subscript].strip()) + '\n'
-	return result.strip()
+	try:
+		result_arr = process.stdout.read().decode().split('\n')
+		keys = result_arr[-5].strip('|').split('|')
+		values = result_arr[-3].strip('|').split('|')
+		result = ''
+		for subscript in range(2, 8):
+			result += md.escape_md(keys[subscript].strip()) + ": " + md.code(values[subscript].strip()) + '\n'
+		return result.strip()
+	except Exception as e:
+		return 'failed: {e}'
 
 
 def run_besttrace(ip):
