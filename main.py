@@ -1,19 +1,31 @@
 import logging
 import subprocess
 import requests
+import re
 from aiogram.utils import markdown as md
 from aiogram import Bot, Dispatcher, executor, types
 
 from config import API_TOKEN, PROXY_URL, SHOW_PUBLIC_IP
+
 logging.basicConfig(level=logging.INFO)
 bot = Bot(token=API_TOKEN, proxy=PROXY_URL)
 dp = Dispatcher(bot)
 
 
+def strip_ip(ip: str) -> str:
+	return re.split(r'[0-9A-Za-z.]+', ip)[0]
+
+
+def strip_port(port: str) -> str:
+	return re.split(r'[0-9]+', port)[0]
+
+
+def strip_host(host: str) -> str:
+	return re.split(r'[A-Za-z.]+', host)[0]
+
+
 def icmp_ping(ip):
-	if ip.__contains__(";", "&"):
-		return "Invalid input"
-	process = subprocess.Popen(f"ping {ip} -c 4", shell=True, stdout=subprocess.PIPE)
+	process = subprocess.Popen(f"ping {strip_ip(ip)} -c 4", shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	result = ''
 	for line in process.stdout.read().decode().split('\n'):
@@ -23,9 +35,8 @@ def icmp_ping(ip):
 
 
 def tcp_ping(ip, port):
-	if ip.__contains__(";", "&"):
-		return "Invalid input"
-	process = subprocess.Popen(f"tcping {ip} -p {port} -c 4 --report", shell=True, stdout=subprocess.PIPE)
+	process = subprocess.Popen(f"tcping {strip_ip(ip)} -p {strip_port(port)} -c 4 --report", shell=True,
+							   stdout=subprocess.PIPE)
 	process.wait()
 	result_arr = process.stdout.read().decode().split('\n')
 	keys = result_arr[-5].strip('|').split('|')
@@ -37,9 +48,7 @@ def tcp_ping(ip, port):
 
 
 def run_besttrace(ip):
-	if ip.__contains__(";", "&"):
-		return "Invalid input"
-	process = subprocess.Popen(f"./lib/besttrace -g cn -q1 {ip}", shell=True, stdout=subprocess.PIPE)
+	process = subprocess.Popen(f"./lib/besttrace -g cn -q1 {strip_ip(ip)}", shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	result = ''
 	for line in process.stdout.read().decode().split('\n'):
@@ -49,9 +58,7 @@ def run_besttrace(ip):
 
 
 def dns_lookup(host, type):
-	if host.__contains__(";", "&") or type.__contains__(";", "&"):
-		return "Invalid input"
-	process = subprocess.Popen(f"nslookup -type={type} {host}", shell=True, stdout=subprocess.PIPE)
+	process = subprocess.Popen(f"nslookup -type={strip_host(type)} {strip_host(host)}", shell=True, stdout=subprocess.PIPE)
 	process.wait()
 	result = ''
 	for line in process.stdout.read().decode().split('\n'):
@@ -70,6 +77,8 @@ I can ping your server with ICMP or TCP protocols.
 Usage:
 /icmp <ip> - ICMP ping to IP
 /tcp <ip> <port> - TCP ping to IP:PORT
+/trace <ip> - Trace route to IP
+/dns <host> <type> - DNS lookup for HOST with TYPE
 '''
 	if SHOW_PUBLIC_IP:
 		ip = requests.get("https://ipinfo.io/json").json()['ip']
