@@ -79,7 +79,7 @@ Usage:
 @dp.message_handler(commands=['icmp'])
 async def icmp(message: types.Message):
 	ip = message.get_args()
-	logging.info(f'ICMP ping {ip}')
+	logging.info(f'{message.from_id} ICMP ping {ip}')
 	if not ip:
 		await message.reply("You must specify IP address!")
 		return
@@ -102,7 +102,7 @@ async def tcp(message: types.Message):
 		return
 	ip = args[0]
 	port = args[1]
-	logging.info(f'TCP ping {ip} {port}')
+	logging.info(f'{message.from_id} TCP ping {ip} {port}')
 	waiting_message = await message.reply(f"TCP pinging to {ip}:{port} ...")
 	try:
 		result = tcp_ping(ip, port)
@@ -114,7 +114,7 @@ async def tcp(message: types.Message):
 @dp.message_handler(commands=['trace'])
 async def trace(message: types.Message):
 	ip = message.get_args()
-	logging.info(f'Trace {ip}')
+	logging.info(f'{message.from_id} trace {ip}')
 	if not ip:
 		await message.reply("You must specify IP address!")
 		return
@@ -136,7 +136,7 @@ async def dns(message: types.Message):
 	type = 'A'
 	if len(args) > 1:
 		type = args[1]
-	logging.info(f'DNS lookup {host} as {type}')
+	logging.info(f'{message.from_id} DNS lookup {host} as {type}')
 	waiting_message = await message.reply(f"DNS lookup {host} as {type} ...")
 	try:
 		result = dns_lookup(host, type)
