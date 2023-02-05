@@ -23,19 +23,10 @@ def icmp_ping(ip):
 
 
 def tcp_ping(ip, port):
-	command = "tcping {} -p {} -c 4 --report".format(quote(ip), quote(port))
+	command = "tcping {} -p {} -c 4".format(quote(ip), quote(port))
 	process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
 	process.wait()
-	try:
-		result_arr = process.stdout.read().decode().split('\n')
-		keys = result_arr[-5].strip('|').split('|')
-		values = result_arr[-3].strip('|').split('|')
-		result = ''
-		for subscript in range(2, 8):
-			result += md.escape_md(keys[subscript].strip()) + ": " + md.code(values[subscript].strip()) + '\n'
-		return result.strip()
-	except Exception as e:
-		return 'failed: {e}'
+	return process.stdout.read().decode()
 
 
 def run_besttrace(ip):
@@ -107,11 +98,8 @@ async def tcp(message: types.Message):
 	port = args[1]
 	logging.info(f'{message.from_id} TCP ping {ip} {port}')
 	waiting_message = await message.reply(f"TCP pinging to {ip}:{port} ...")
-	try:
-		result = tcp_ping(ip, port)
-		await waiting_message.edit_text(md.escape_md(f"TCP ping to {ip}:{port}:\n") + result, parse_mode='MarkdownV2')
-	except Exception as e:
-		await waiting_message.edit_text(f"TCP ping to {ip}:{port}:\n{e}")
+	result = tcp_ping(ip, port)
+	await waiting_message.edit_text(f"TCP ping to {ip}:{port}:\n {result}")
 
 
 @dp.message_handler(commands=['trace'])
