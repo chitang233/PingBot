@@ -1,7 +1,7 @@
 import logging
 import requests
 from aiogram import types
-from config import SHOW_PUBLIC_IP
+from os import getenv
 from main import dp
 from utils import icmp_ping, tcp_ping, run_nexttrace, dns_lookup
 
@@ -16,8 +16,10 @@ I can ping your server with ICMP or TCP protocols.
 Usage:
 /icmp <ip> - ICMP ping to IP
 /tcp <ip> <port> - TCP ping to IP:PORT
+/trace <ip> - Show route to IP
+/dns <host> [record_type] - DNS lookup
 '''
-	if SHOW_PUBLIC_IP:
+	if getenv("SHOW_PUBLIC_IP"):
 		ip = requests.get("https://ipinfo.io/json").json()['ip']
 		city = requests.get("https://ipinfo.io/json").json()['city']
 		await message.reply(f"{content}\nRunning on {ip} in {city}".strip())

@@ -1,3 +1,0 @@
-API_TOKEN = '5722369723:AAFu6D_I_S2BbbLOqwNy71OgQrlJSadkbKg'
-PROXY_URL = 'socks5://localhost:12080'
-SHOW_PUBLIC_IP = True
