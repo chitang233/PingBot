@@ -51,8 +51,7 @@ def whois(domain):
 		lines = result.splitlines()
 		filtered_result = [line for line in lines if
 											 'REDACTED FOR PRIVACY' not in line and 'Please query the' not in line]
-		return "\n".join(filtered_result).split(
-			"For more information on Whois status codes, please visit https://icann.org/epp")[0]
+		return "\n".join(filtered_result).split("For more information on ")[0]
 	else:
 		return None
 
