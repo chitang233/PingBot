@@ -10,9 +10,10 @@ A simple Telegram bot to ping a server over ICMP or TCP protocol.
 
 ```shell
 docker run -d \
-  -e API_TOKEN=YOUR_TOKEN \
-  -e PROXY_URL=PROXY_URL \
+  -e API_TOKEN= \
+  -e PROXY_URL= \
   -e SHOW_PUBLIC_IP=1 \
+  -e ALICLOUD_APPCODE= \
   --name pingbot \
   chitang233/pingbot
 ```
@@ -46,6 +47,7 @@ Edit `.env`
 
 - `API_TOKEN` - Your Telegram Bot token.(Get it from [@BotFather](https://t.me/BotFather))
 - `PROXY_URL` - Optional. Your proxy URL. Support HTTP and SOCKS5. *e.g. `http://host:port`, `socks5://host:port`*
+- `ALICLOUD_APPCODE` - Optional. Your AlibabaCloud AppCode.
 - `SHOW_PUBLIC_IP` - Show your machine's public IP address and country in `/start` command if set to `1`.
 
 ## Commands
@@ -58,4 +60,5 @@ trace - Show the route to a server
 dns - Resolve a domain name
 whois - Get whois information of a domain
 ip - Get IP address of a domain
+ip_alicloud - Get IP information using AlibabaCloud API
 ```

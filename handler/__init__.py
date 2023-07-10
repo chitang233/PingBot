@@ -10,7 +10,8 @@ from main import dp
 @dp.message_handler(commands=['start', 'help'])
 async def send_welcome(message: types.Message):
 	load_dotenv()
-	SHOW_PUBLIC_IP = getenv("SHOW_PUBLIC_IP")
+	show_public_ip = getenv("SHOW_PUBLIC_IP")
+	appcode = getenv("ALICLOUD_APPCODE")
 	content = '''
 Hello!
 I'm Ping Bot!
@@ -24,12 +25,13 @@ Usage:
 /whois <domain> - Get WHOIS information
 /ip <ip> - Get IP information
 '''
-	if SHOW_PUBLIC_IP:
+	if 'appcode' in locals():
+		content += "/ip_alicloud <ip> - Get IP information using AlibabaCloud API\n"
+	if show_public_ip:
 		ip = requests.get("https://ipinfo.io/json").json()['ip']
 		city = requests.get("https://ipinfo.io/json").json()['city']
-		await message.reply(f"{content}\nRunning on {ip} in {city}".strip())
-	else:
-		await message.reply(content.strip())
+		content += f"Running on {ip} in {city}\n"
+	await message.reply(content.strip())
 
 
 @dp.message_handler(commands=['icmp'])
@@ -123,6 +125,22 @@ async def ip(message: types.Message):
 	waiting_message = await message.reply(f"Checking IP information for {ip} ...")
 	try:
 		result = utils.ip_info(ip)
+		await waiting_message.edit_text(f"{result}", parse_mode="MarkdownV2", disable_web_page_preview=True)
+	except Exception as e:
+		await waiting_message.edit_text(f"Checking {ip} failed:\n{e}")
+
+
+@dp.message_handler(commands=['ip_alicloud'])
+async def ip_alicloud(message: types.Message):
+	appcode = getenv('ALICLOUD_APPCODE')
+	ip = message.get_args()
+	if not ip:
+		await message.reply("You must specify IP address!")
+		return
+	logging.info(f'{message.from_id} ip_alicloud {ip}')
+	waiting_message = await message.reply(f"Checking IP information for {ip} ...")
+	try:
+		result = utils.ip_info_alicloud(ip, appcode)
 		await waiting_message.edit_text(f"{result}", parse_mode="MarkdownV2", disable_web_page_preview=True)
 	except Exception as e:
 		await waiting_message.edit_text(f"Checking {ip} failed:\n{e}")

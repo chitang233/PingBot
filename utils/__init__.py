@@ -1,6 +1,7 @@
 from shlex import quote
 import subprocess
 import requests
+from ipaddress import IPv4Address, IPv6Address, ip_address
 
 
 def icmp_ping(ip):
@@ -58,24 +59,32 @@ def whois(domain):
 
 def ip_info(ip):
 	result = f'Target: `{ip}`\n'
-	ipinfo_response = requests.get('https://ipinfo.io/{}/json'.format(ip))
-	ipapi_response = requests.get("http://ip-api.com/json/{}".format(ip))
-	if ipinfo_response.status_code != 200 or ipapi_response.status_code != 200:
-		return None
-	region = f'{ipinfo_response.json()["city"]} \- {ipinfo_response.json()["region"]} \- {ipinfo_response.json()["country"]}'
-	asn = ipinfo_response.json()["org"].split(" ")[0]
-	if 'hostname' in ipinfo_response.json():
-		hostname = ipinfo_response.json()["hostname"]
-	if 'anycast' in ipinfo_response.json():
-		anycast = 'This is an anycast IP address'
-	isp = ipapi_response.json()["isp"]
-	org = ipapi_response.json()["org"]
-	result += f'Region: `{region}`\n'
-	result += f'ASN: `{asn}`\n'
-	if 'hostname' in locals():
-		result += f'Hostname: `{hostname}`\n'
-	result += f'ISP: `{isp}`\n'
-	result += f'Org: `{org}`\n'
-	if 'anycast' in locals():
-		result += f'Anycast: {anycast}\n'
+	ipinfo_response = requests.get('https://ipinfo.io/{}/json'.format(ip)).json()
+	ipapi_response = requests.get("http://ip-api.com/json/{}".format(ip)).json()
+	result += f'Region: `f{ipinfo_response["city"]}` \- `{ipinfo_response["region"]}` \- `{ipinfo_response["country"]}`\n'
+	result += f'ASN: `{ipinfo_response["org"].split(" ")[0]}`\n'
+	if 'hostname' in ipinfo_response:
+		result += f'Hostname: `{ipinfo_response["hostname"]}`\n'
+	result += f'ISP: `{ipapi_response()["isp"]}`\n'
+	result += f'Organization: `{ipapi_response()["org"]}`\n'
+	if 'anycast' in ipinfo_response:
+		result += 'This is an anycast IP address'
+	return result
+
+
+def ip_info_alicloud(ip, appcode):
+	result = f'Target: `{ip}`\n'
+	response = None
+	ip = ip_address(ip)
+	if isinstance(ip, IPv4Address):
+		response = requests.get(url=f'https://ipcity.market.alicloudapi.com/ip/city/query?coordsys=coordsys&ip={ip}',
+														headers={"Authorization": f"APPCODE {appcode}"}
+														).json()['data']['result']
+	if isinstance(ip, IPv6Address):
+		response = requests.get(url=f'https://ipv6city.market.alicloudapi.com/ip/ipv6/query?coordsys=coordsys&ip={ip}',
+														headers={"Authorization": f"APPCODE {appcode}"}
+														).json()['data']['result']
+	result += f'Region: `{response["city"]}` \- `{response["prov"]}` \- `{response["country"]}`\n'
+	result += f'ASN: `{response["asnumber"]}`\n'
+	result += f'ISP: `{response["isp"]}`\n'
 	return result
