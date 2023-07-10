@@ -2,3 +2,4 @@ aiogram
 aiohttp_socks
 requests
 tcping
+python-dotenv
