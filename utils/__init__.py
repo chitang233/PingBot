@@ -1,5 +1,6 @@
 from shlex import quote
 import subprocess
+import requests
 
 
 def icmp_ping(ip):
@@ -40,3 +41,26 @@ def run_nexttrace(ip):
 		if not ('*' in line or 'BestTrace' in line):
 			result += line + '\n'
 	return result.strip()
+
+
+def whois(domain):
+	response = requests.get('https://namebeta.com/api/search/check?query={}'.format(domain))
+	if response.status_code == 200:
+		return response.json()['whois']['whois']
+	else:
+		return None
+
+
+def ip_info(ip):
+	response = requests.get('https://ipinfo.io/{}/json'.format(ip))
+	if response.status_code == 200:
+		result = f'Target: {ip}'
+		result += f'Region: {response.json()["city"]} - {response.json()["region"]} - {response.json()["country"]}'
+		result += f'Organization: {response.json()["org"]}'
+		if ['hostname'] in response.json():
+			result += f'Hostname: {response.json()["hostname"]}'
+		if ['anycast'] in response.json():
+			result += f'This is an anycast IP address'
+
+	else:
+		return None

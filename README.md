@@ -56,4 +56,6 @@ icmp - Ping a server over ICMP protocol
 tcp - Ping a server over TCP protocol, port required
 trace - Show the route to a server
 dns - Resolve a domain name
+whois - Get whois information of a domain
+ip - Get IP address of a domain
 ```

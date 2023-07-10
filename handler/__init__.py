@@ -1,10 +1,10 @@
 import logging
 import requests
+import utils
 from aiogram import types
 from os import getenv
 from dotenv import load_dotenv
 from main import dp
-from utils import icmp_ping, tcp_ping, run_nexttrace, dns_lookup
 
 
 @dp.message_handler(commands=['start', 'help'])
@@ -21,6 +21,8 @@ Usage:
 /tcp <ip> <port> - TCP ping to IP:PORT
 /trace <ip> - Show the route to a server
 /dns <host> [record_type] - Resolve a domain name
+/whois <domain> - Get WHOIS information
+/ip <ip> - Get IP information
 '''
 	if SHOW_PUBLIC_IP:
 		ip = requests.get("https://ipinfo.io/json").json()['ip']
@@ -39,7 +41,7 @@ async def icmp(message: types.Message):
 		return
 	waiting_message = await message.reply(f"ICMP pinging to {ip} ...")
 	try:
-		result = icmp_ping(ip)
+		result = utils.icmp_ping(ip)
 		if result:
 			await waiting_message.edit_text(f"ICMP ping to {ip}:\n{result}")
 		else:
@@ -58,7 +60,7 @@ async def tcp(message: types.Message):
 	port = args[1]
 	logging.info(f'{message.from_id} TCP ping {ip} {port}')
 	waiting_message = await message.reply(f"TCP pinging to {ip}:{port} ...")
-	result = tcp_ping(ip, port)
+	result = utils.tcp_ping(ip, port)
 	await waiting_message.edit_text(f"TCP ping to {ip}:{port}:\n {result}")
 
 
@@ -71,7 +73,7 @@ async def trace(message: types.Message):
 		return
 	waiting_message = await message.reply(f"Tracing to {ip} ...")
 	try:
-		result = run_nexttrace(ip)
+		result = utils.run_nexttrace(ip)
 		await waiting_message.edit_text(f"Trace to {ip}:\n{result}")
 	except Exception as e:
 		await waiting_message.edit_text(f"Trace to {ip}:\n{e}")
@@ -90,7 +92,37 @@ async def dns(message: types.Message):
 	logging.info(f'{message.from_id} DNS lookup {host} as {record_type}')
 	waiting_message = await message.reply(f"DNS lookup {host} as {record_type} ...")
 	try:
-		result = dns_lookup(host, record_type)
+		result = utils.dns_lookup(host, record_type)
 		await waiting_message.edit_text(f"DNS lookup {host} as {record_type}:\n{result}")
 	except Exception as e:
 		await waiting_message.edit_text(f"DNS lookup {host} as {record_type} failed:\n{e}")
+
+
+@dp.message_handler(commands=['whois'])
+async def whois(message: types.Message):
+	domain = message.get_args()
+	if not domain:
+		await message.reply("You must specify domain!")
+		return
+	logging.info(f'{message.from_id} whois {domain}')
+	waiting_message = await message.reply(f"Checking WHOIS information for {domain} ...")
+	try:
+		result = utils.whois(domain)
+		await waiting_message.edit_text(f"{domain}:\n{result}")
+	except Exception as e:
+		await waiting_message.edit_text(f"{domain} failed:\n{e}")
+
+
+@dp.message_handler(commands=['ip'])
+async def ip(message: types.Message):
+	ip = message.get_args()
+	if not ip:
+		await message.reply("You must specify IP address!")
+		return
+	logging.info(f'{message.from_id} ip {ip}')
+	waiting_message = await message.reply(f"Checking IP information for {ip} ...")
+	try:
+		result = utils.ip_info(ip)
+		await waiting_message.edit_text(f"{ip}:\n{result}")
+	except Exception as e:
+		await waiting_message.edit_text(f"{ip} failed:\n{e}")
