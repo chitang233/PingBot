@@ -23,7 +23,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Extract metadata (tags, labels) for GitHub Packages
-        id: meta
         uses: docker/metadata-action@master
         with:
           images: ghcr.io/chitang233/pingbot
@@ -47,7 +46,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Extract metadata (tags, labels) for Docker Hub
-        id: meta
         uses: docker/metadata-action@master
         with:
           images: chitang233/pingbot
