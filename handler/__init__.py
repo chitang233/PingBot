@@ -45,11 +45,11 @@ async def icmp(message: types.Message):
 	try:
 		result = utils.icmp_ping(ip)
 		if result:
-			await waiting_message.edit_text(f"ICMP ping to {ip}:\n{result}")
+			await waiting_message.edit_text(f"ICMP ping to `{ip}`:\n`{result}`", parse_mode="MarkdownV2", disable_web_page_preview=True)
 		else:
-			await waiting_message.edit_text(f"ICMP ping to {ip}:\nNo result")
+			await waiting_message.edit_text(f"ICMP ping to `{ip}`:\nNo result", parse_mode="MarkdownV2", disable_web_page_preview=True)
 	except Exception as e:
-		await waiting_message.edit_text(f"ICMP ping to {ip}:\n{e}")
+		await waiting_message.edit_text(f"ICMP ping to `{ip}`:\n`{e}`", parse_mode="MarkdownV2", disable_web_page_preview=True)
 
 
 @dp.message_handler(commands=['tcp'])
@@ -61,9 +61,9 @@ async def tcp(message: types.Message):
 	ip = args[0]
 	port = args[1]
 	logging.info(f'{message.from_id} TCP ping {ip} {port}')
-	waiting_message = await message.reply(f"TCP pinging to {ip}:{port} ...")
+	waiting_message = await message.reply(f"TCP pinging to `{ip}:{port}` ...", parse_mode="Markdown", disable_web_page_preview=True)
 	result = utils.tcp_ping(ip, port)
-	await waiting_message.edit_text(f"TCP ping to {ip}:{port}:\n {result}")
+	await waiting_message.edit_text(f"TCP ping to `{ip}:{port}`:\n `{result}`", parse_mode="Markdown", disable_web_page_preview=True)
 
 
 @dp.message_handler(commands=['trace'])
@@ -73,12 +73,12 @@ async def trace(message: types.Message):
 	if not ip:
 		await message.reply("You must specify IP address!")
 		return
-	waiting_message = await message.reply(f"Tracing to {ip} ...")
+	waiting_message = await message.reply(f"Tracing to `{ip}` ...")
 	try:
 		result = utils.run_nexttrace(ip)
-		await waiting_message.edit_text(f"Trace to {ip}:\n{result}")
+		await waiting_message.edit_text(f"Trace to `{ip}`:\n`{result}`", parse_mode="MarkdownV2", disable_web_page_preview=True)
 	except Exception as e:
-		await waiting_message.edit_text(f"Trace to {ip}:\n{e}")
+		await waiting_message.edit_text(f"Trace to `{ip}`:\n` {e}`", parse_mode="MarkdownV2", disable_web_page_preview=True)
 
 
 @dp.message_handler(commands=['dns'])
@@ -95,9 +95,9 @@ async def dns(message: types.Message):
 	waiting_message = await message.reply(f"DNS lookup {host} as {record_type} ...")
 	try:
 		result = utils.dns_lookup(host, record_type)
-		await waiting_message.edit_text(f"DNS lookup {host} as {record_type}:\n{result}")
+		await waiting_message.edit_text(f"`DNS lookup {host} as {record_type}:\n{result}`", parse_mode="MarkdownV2", disable_web_page_preview=True)
 	except Exception as e:
-		await waiting_message.edit_text(f"DNS lookup {host} as {record_type} failed:\n{e}")
+		await waiting_message.edit_text(f"`DNS lookup {host} as {record_type} failed:\n{e}`", parse_mode="MarkdownV2", disable_web_page_preview=True)
 
 
 @dp.message_handler(commands=['whois'])
@@ -112,7 +112,7 @@ async def whois(message: types.Message):
 		result = utils.whois(domain)
 		await waiting_message.edit_text(f"`{result}`", parse_mode="MarkdownV2", disable_web_page_preview=True)
 	except Exception as e:
-		await waiting_message.edit_text(f"Checking {domain} failed:\n{e}")
+		await waiting_message.edit_text(f"Checking `{domain}` failed:\n`{e}`", parse_mode="MarkdownV2", disable_web_page_preview=True)
 
 
 @dp.message_handler(commands=['ip'])
