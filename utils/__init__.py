@@ -59,14 +59,14 @@ def whois(domain):
 
 def ip_info(ip):
 	result = f'Target: `{ip}`\n'
-	ipinfo_response = requests.get('https://ipinfo.io/{}/json'.format(ip)).json()
-	ipapi_response = requests.get("http://ip-api.com/json/{}".format(ip)).json()
+	ipinfo_response = requests.get(f'https://ipinfo.io/{ip}/json').json()
+	ipapi_response = requests.get(f'http://ip-api.com/json/{ip}').json()
 	result += f'Region: `f{ipinfo_response["city"]}` \- `{ipinfo_response["region"]}` \- `{ipinfo_response["country"]}`\n'
 	result += f'ASN: `{ipinfo_response["org"].split(" ")[0]}`\n'
 	if 'hostname' in ipinfo_response:
 		result += f'Hostname: `{ipinfo_response["hostname"]}`\n'
-	result += f'ISP: `{ipapi_response()["isp"]}`\n'
-	result += f'Organization: `{ipapi_response()["org"]}`\n'
+	result += f'ISP: `{ipapi_response["isp"]}`\n'
+	result += f'Organization: `{ipapi_response["org"]}`\n'
 	if 'anycast' in ipinfo_response:
 		result += 'This is an anycast IP address'
 	return result
