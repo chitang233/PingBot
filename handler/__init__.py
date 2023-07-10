@@ -108,9 +108,9 @@ async def whois(message: types.Message):
 	waiting_message = await message.reply(f"Checking WHOIS information for {domain} ...")
 	try:
 		result = utils.whois(domain)
-		await waiting_message.edit_text(f"{domain}:\n{result}")
+		await waiting_message.edit_text(f"`{result}`", parse_mode="MarkdownV2", disable_web_page_preview=True)
 	except Exception as e:
-		await waiting_message.edit_text(f"{domain} failed:\n{e}")
+		await waiting_message.edit_text(f"Checking {domain} failed:\n{e}")
 
 
 @dp.message_handler(commands=['ip'])
@@ -123,6 +123,6 @@ async def ip(message: types.Message):
 	waiting_message = await message.reply(f"Checking IP information for {ip} ...")
 	try:
 		result = utils.ip_info(ip)
-		await waiting_message.edit_text(f"{ip}:\n{result}")
+		await waiting_message.edit_text(f"{result}", parse_mode="MarkdownV2", disable_web_page_preview=True)
 	except Exception as e:
-		await waiting_message.edit_text(f"{ip} failed:\n{e}")
+		await waiting_message.edit_text(f"Checking {ip} failed:\n{e}")

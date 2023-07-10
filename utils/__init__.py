@@ -46,21 +46,36 @@ def run_nexttrace(ip):
 def whois(domain):
 	response = requests.get('https://namebeta.com/api/search/check?query={}'.format(domain))
 	if response.status_code == 200:
-		return response.json()['whois']['whois']
+		result = response.json()['whois']['whois']
+		lines = result.splitlines()
+		filtered_result = [line for line in lines if
+											 'REDACTED FOR PRIVACY' not in line and 'Please query the' not in line]
+		return "\n".join(filtered_result).split(
+			"For more information on Whois status codes, please visit https://icann.org/epp")[0]
 	else:
 		return None
 
 
 def ip_info(ip):
-	response = requests.get('https://ipinfo.io/{}/json'.format(ip))
-	if response.status_code == 200:
-		result = f'Target: {ip}'
-		result += f'Region: {response.json()["city"]} - {response.json()["region"]} - {response.json()["country"]}'
-		result += f'Organization: {response.json()["org"]}'
-		if ['hostname'] in response.json():
-			result += f'Hostname: {response.json()["hostname"]}'
-		if ['anycast'] in response.json():
-			result += f'This is an anycast IP address'
-
-	else:
+	result = f'Target: `{ip}`\n'
+	ipinfo_response = requests.get('https://ipinfo.io/{}/json'.format(ip))
+	ipapi_response = requests.get("http://ip-api.com/json/{}".format(ip))
+	if ipinfo_response.status_code != 200 or ipapi_response.status_code != 200:
 		return None
+	region = f'{ipinfo_response.json()["city"]} \- {ipinfo_response.json()["region"]} \- {ipinfo_response.json()["country"]}'
+	asn = ipinfo_response.json()["org"].split(" ")[0]
+	if 'hostname' in ipinfo_response.json():
+		hostname = ipinfo_response.json()["hostname"]
+	if 'anycast' in ipinfo_response.json():
+		anycast = 'This is an anycast IP address'
+	isp = ipapi_response.json()["isp"]
+	org = ipapi_response.json()["org"]
+	result += f'Region: `{region}`\n'
+	result += f'ASN: `{asn}`\n'
+	if 'hostname' in locals():
+		result += f'Hostname: `{hostname}`\n'
+	result += f'ISP: `{isp}`\n'
+	result += f'Org: `{org}`\n'
+	if 'anycast' in locals():
+		result += f'Anycast: {anycast}\n'
+	return result
