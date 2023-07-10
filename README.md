@@ -32,13 +32,14 @@ Then, clone the repo and install the requirements:
 ```shell
 git clone https://github.com/chitang233/PingBot
 cd PingBot
-pip install -r requirements.txt
+pip3 install -r requirements.txt
+cp .env.example .env
 ```
 
 After [configuration](#configuration), run it:
 
 ```shell
-python main.py
+python3 main.py
 ```
 
 ## Configuration
