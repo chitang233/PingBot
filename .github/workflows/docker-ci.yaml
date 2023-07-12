@@ -15,51 +15,51 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Log in to GitHub Packages
-        uses: docker/login-action@master
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata (tags, labels) for GitHub Packages
-        uses: docker/metadata-action@master
-        id: ghcr-meta
-        with:
-          images: ghcr.io/chitang233/pingbot
-          tags: |
-            type=ref,event=branch
-            type=sha
-            latest
-
-      - name: Build and push image to GitHub Packages
-        uses: docker/build-push-action@master
-        with:
-          context: .
-          push: true
-          tags: ${{ steps.ghcr-meta.outputs.tags }}
-          labels: ${{ steps.ghcr-meta.outputs.labels }}
-
-      # - name: Log in to Docker Hub
+      # - name: Log in to GitHub Packages
       #   uses: docker/login-action@master
       #   with:
-      #     username: ${{ secrets.DOCKER_USERNAME }}
-      #     password: ${{ secrets.DOCKER_PASSWORD }}
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Extract metadata (tags, labels) for Docker Hub
+      # - name: Extract metadata (tags, labels) for GitHub Packages
       #   uses: docker/metadata-action@master
-      #   id: docker-hub-meta
+      #   id: ghcr-meta
       #   with:
-      #     images: chitang233/pingbot
+      #     images: ghcr.io/chitang233/pingbot
       #     tags: |
       #       type=ref,event=branch
       #       type=sha
       #       latest
 
-      # - name: Build and push image to Docker Hub
+      # - name: Build and push image to GitHub Packages
       #   uses: docker/build-push-action@master
       #   with:
       #     context: .
       #     push: true
-      #     tags: ${{ steps.docker-hub-meta.outputs.tags }}
-      #     labels: ${{ steps.docker-hub-meta.outputs.labels }}
+      #     tags: ${{ steps.ghcr-meta.outputs.tags }}
+      #     labels: ${{ steps.ghcr-meta.outputs.labels }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@master
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker Hub
+        uses: docker/metadata-action@master
+        id: docker-hub-meta
+        with:
+          images: chitang233/pingbot
+          tags: |
+            type=ref,event=branch
+            type=sha
+            latest
+
+      - name: Build and push image to Docker Hub
+        uses: docker/build-push-action@master
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.docker-hub-meta.outputs.tags }}
+          labels: ${{ steps.docker-hub-meta.outputs.labels }}
