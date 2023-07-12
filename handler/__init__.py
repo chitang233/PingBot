@@ -88,7 +88,7 @@ async def dns(message: types.Message):
 		await message.reply("You must specify hostname!")
 		return
 	host = args[0]
-	record_type = 'A'
+	record_type = "A"
 	if len(args) > 1:
 		record_type = args[1]
 	logging.info(f'{message.from_id} DNS lookup {host} as {record_type}')

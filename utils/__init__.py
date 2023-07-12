@@ -49,30 +49,43 @@ def whois(domain):
 	if response.status_code == 200:
 		result = response.json()['whois']['whois']
 		lines = result.splitlines()
-		filtered_result = [line for line in lines if
-											 'REDACTED FOR PRIVACY' not in line and 'Please query the' not in line]
+		filtered_result = [line for line in lines if 'REDACTED FOR PRIVACY' not in line and 'Please query the' not in line]
 		return "\n".join(filtered_result).split("For more information on ")[0]
 	else:
 		return None
 
 
 def ip_info(ip):
-	result = f'Target: `{ip}`\n'
+	if isinstance(ip_address(ip), IPv4Address) or isinstance(ip_address(ip), IPv6Address):
+		result = f'Target: `{ip}`\n'
+	else:
+		domain = ip
+		ip = dns_lookup(ip, 'A').split('Address: ')[1].split('\n')[0]
+		result = f'Target: `{domain}` \(`{ip}`\)\n'
 	ipinfo_response = requests.get(f'https://ipinfo.io/{ip}/json').json()
 	ipapi_response = requests.get(f'http://ip-api.com/json/{ip}').json()
-	result += f'Region: `f{ipinfo_response["city"]}` \- `{ipinfo_response["region"]}` \- `{ipinfo_response["country"]}`\n'
-	result += f'ASN: `{ipinfo_response["org"].split(" ")[0]}`\n'
+	if 'city' and 'region' and 'country' in ipinfo_response:
+		result += f'Region: `f{ipinfo_response["city"]}` \- `{ipinfo_response["region"]}` \- `{ipinfo_response["country"]}`\n'
+	if 'org' in ipinfo_response:
+		result += f'ASN: `{ipinfo_response["org"].split(" ")[0]}`\n'
 	if 'hostname' in ipinfo_response:
 		result += f'Hostname: `{ipinfo_response["hostname"]}`\n'
-	result += f'ISP: `{ipapi_response["isp"]}`\n'
-	result += f'Organization: `{ipapi_response["org"]}`\n'
+	if 'isp' in ipapi_response:
+		result += f'ISP: `{ipapi_response["isp"]}`\n'
+	if 'org' in ipapi_response:
+		result += f'Organization: `{ipapi_response["org"]}`\n'
 	if 'anycast' in ipinfo_response:
 		result += 'This is an anycast IP address'
 	return result
 
 
 def ip_info_alicloud(ip, appcode):
-	result = f'Target: `{ip}`\n'
+	if isinstance(ip_address(ip), IPv4Address) or isinstance(ip_address(ip), IPv6Address):
+		result = f'Target: `{ip}`\n'
+	else:
+		domain = ip
+		ip = dns_lookup(ip, 'A').split('Address: ')[1].split('\n')[0]
+		result = f'Target: `{domain}` \(`{ip}`\)\n'
 	response = None
 	ip = ip_address(ip)
 	if isinstance(ip, IPv4Address):

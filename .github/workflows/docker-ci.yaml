@@ -26,7 +26,7 @@ jobs:
         uses: docker/metadata-action@master
         id: ghcr-meta
         with:
-          images: chitang233/pingbot
+          images: ghcr.io/chitang233/pingbot
           tags: |
             type=ref,event=branch
             type=sha
