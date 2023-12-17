@@ -1,5 +1,8 @@
 # PingBot
 
+> [!IMPORTANT]
+> Check [KimmyXYC/PingBot](https://github.com/KimmyXYC/PingBot) instead.
+
 A simple Telegram bot to ping a server over ICMP or TCP protocol.
 
 [![Docker Image CI](https://github.com/chitang233/PingBot/actions/workflows/docker-ci.yaml/badge.svg)](https://github.com/chitang233/PingBot/actions/workflows/docker-ci.yaml)
